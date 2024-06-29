@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map with Current Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #mapid {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="mapid"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('mapid').setView([51.505, -0.09], 13);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to handle success in geolocation
+        function onLocationFound(e) {
+            var radius = e.accuracy / 2;
+
+            // Log latitude and longitude to console
+            console.log('Latitude: ' + e.latlng.lat);
+            console.log('Longitude: ' + e.latlng.lng);
+
+            // Add marker at the user's location
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+            // Add a circle around the user's location
+            L.circle(e.latlng, radius).addTo(map);
+        }
+
+        // Function to handle error in geolocation
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        // Add event listeners for location found and error
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+
+        // Request the user's location
+        map.locate({setView: true, maxZoom: 16});
+    </script>
+</body>
+</html>
