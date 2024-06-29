@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaflet Map with Current Location</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
         #mapid {
             width: 100%;
@@ -15,6 +16,7 @@
 <body>
     <div id="mapid"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script>
         // Initialize the map
         var map = L.map('mapid').setView([51.505, -0.09], 13);
@@ -80,10 +82,30 @@
                     shadowSize: [41, 41]
                 });
 
-                // Add markers for each close bin with red icon
+                // Create a routing control for each close bin
                 data.forEach(bin => {
                     L.marker([bin.latitude, bin.longitude], { icon: redIcon }).addTo(map)
-                        .bindPopup(`Poubelle la plus proche à ${bin.distance.toFixed(2)} mètres`);
+                        .bindPopup(`
+                            <b>Poubelle la plus proche à ${bin.distance.toFixed(2)} mètres</b><br>
+                            <img src="https://www.bricoma.ma/pub/media/catalog/product/cache/7ae06499deb90fe0eec5741ca023c477/-/3/-360-litre-poubelle-poubelle-en-plastique-de-plein-.jpg" alt="Image de la poubelle" style="width:100px;height:auto;">
+                        `);
+
+                    // Add routing from user's location to the bin location
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(latitude, longitude),
+                            L.latLng(bin.latitude, bin.longitude)
+                        ],
+                        createMarker: function() { return null; }, // Hide routing markers
+                        lineOptions: {
+                            styles: [{ color: 'red', weight: 4 }]
+                        },
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        routeWhileDragging: false,
+                        fitSelectedRoutes: false,
+                        show: false
+                    }).addTo(map);
                 });
             })
             .catch(error => console.error('Error sending location to backend:', error));

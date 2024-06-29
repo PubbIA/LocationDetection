@@ -7,7 +7,7 @@ CORS(app, resources={r"/bins": {"origins": "*"}})  # Autoriser toutes les origin
 
 # Données statiques des poubelles
 bins = [
-       {'id': 1, 'latitude': 33.983430, 'longitude': -6.809990},
+       {'id': 1, 'latitude': 33.983430, 'longitude': -6.809990}, 
     {'id': 2, 'latitude': 33.986430, 'longitude': -6.809990},
     # {'id': 3, 'latitude': 33.983970, 'longitude': -6.808700},
     {'id': 4, 'latitude': 33.983740, 'longitude': -6.808610}, 
@@ -30,7 +30,7 @@ def manage_bins():
         for bin in bins:
             bin_location = (bin['latitude'], bin['longitude'])
             distance = geodesic(user_location, bin_location).meters
-            if distance <= 150:  # Distance en mètres
+            if distance <= 600:  # Distance en mètres
                 bin['distance'] = distance
                 nearby_bins.append(bin)
                 #print all bins with distance
