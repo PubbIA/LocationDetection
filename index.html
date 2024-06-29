@@ -35,7 +35,6 @@
             // Add marker at the user's location
             L.marker(e.latlng).addTo(map)
                 .bindPopup("You are within " + radius + " meters from this point" + "<br>Latitude: " + e.latlng.lat + "<br>Longitude: " + e.latlng.lng).openPopup();
-
             // Add a circle around the user's location
             L.circle(e.latlng, radius).addTo(map);
         }
