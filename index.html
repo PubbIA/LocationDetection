@@ -26,17 +26,20 @@
 
         // Function to handle success in geolocation
         function onLocationFound(e) {
-            var radius = e.accuracy / 2;
+            var radius = 100; // 100 meters radius
 
-            // Log latitude and longitude to console
             console.log('Latitude: ' + e.latlng.lat);
             console.log('Longitude: ' + e.latlng.lng);
 
             // Add marker at the user's location
             L.marker(e.latlng).addTo(map)
-                .bindPopup("You are within " + radius + " meters from this point" + "<br>Latitude: " + e.latlng.lat + "<br>Longitude: " + e.latlng.lng).openPopup();
+                .bindPopup("You are here").openPopup();
+
             // Add a circle around the user's location
-            L.circle(e.latlng, radius).addTo(map);
+            L.circle(e.latlng, { radius: radius }).addTo(map);
+
+            // Send user location to backend
+            sendUserLocationToBackend(e.latlng.lat, e.latlng.lng);
         }
 
         // Function to handle error in geolocation
@@ -50,6 +53,41 @@
 
         // Request the user's location
         map.locate({setView: true, maxZoom: 16});
+
+        // Function to send user location to backend
+        function sendUserLocationToBackend(latitude, longitude) {
+            const url = 'http://127.0.0.1:5000/bins';
+            const data = {
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Define red marker icon
+                var redIcon = L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+                // Add markers for each close bin with red icon
+                data.forEach(bin => {
+                    L.marker([bin.latitude, bin.longitude], { icon: redIcon }).addTo(map)
+                        .bindPopup(`Poubelle la plus proche à ${bin.distance.toFixed(2)} mètres`);
+                });
+            })
+            .catch(error => console.error('Error sending location to backend:', error));
+        }
     </script>
 </body>
 </html>
