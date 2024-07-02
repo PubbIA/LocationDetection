@@ -84,10 +84,20 @@
 
                 // Create a routing control for each close bin
                 data.forEach(bin => {
+                    // Static variables for bin status
+                    var etat_plastique = "60%";
+                    var etat_verre = "75%";
+                    var etat_papier = "40%";
+
                     L.marker([bin.latitude, bin.longitude], { icon: redIcon }).addTo(map)
                         .bindPopup(`
                             <b>Poubelle la plus proche à ${bin.distance.toFixed(2)} mètres</b><br>
-                            <img src="https://www.bricoma.ma/pub/media/catalog/product/cache/7ae06499deb90fe0eec5741ca023c477/-/3/-360-litre-poubelle-poubelle-en-plastique-de-plein-.jpg" alt="Image de la poubelle" style="width:100px;height:auto;">
+                            <img src="https://www.bricoma.ma/pub/media/catalog/product/cache/7ae06499deb90fe0eec5741ca023c477/-/3/-360-litre-poubelle-poubelle-en-plastique-de-plein-.jpg" alt="Image de la poubelle" style="width: 100px; height: 100px; center">
+                            <div>
+                                <b>État du plastique:</b> ${etat_plastique}<br>
+                                <b>État du verre:</b> ${etat_verre}<br>
+                                <b>État du papier:</b> ${etat_papier}
+                            </div>
                         `);
 
                     // Add routing from user's location to the bin location
