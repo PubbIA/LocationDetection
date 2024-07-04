@@ -30,7 +30,7 @@ def manage_bins():
         for bin in bins:
             bin_location = (bin['latitude'], bin['longitude'])
             distance = geodesic(user_location, bin_location).meters
-            if distance <= 600:  # Distance en mètres
+            if distance <= 3000:  # Distance en mètres
                 bin['distance'] = distance
                 nearby_bins.append(bin)
                 #print all bins with distance
